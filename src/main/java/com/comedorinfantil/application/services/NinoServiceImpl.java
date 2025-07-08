@@ -4,6 +4,7 @@ import com.comedorinfantil.dominio.modelo.*;
 import com.comedorinfantil.dominio.ports.in.NinoServicePort;
 import com.comedorinfantil.dominio.ports.out.NinoRepositoryPort;
 
+import java.sql.Date;
 import java.util.List;
 
 public class NinoServiceImpl implements NinoServicePort {
@@ -46,5 +47,21 @@ public class NinoServiceImpl implements NinoServicePort {
     public List<NinoAlergia> obtenerNinosConAlergias() {
         return ninoRepositoryPort.obtenerNinosConAlergias();
     }
+
+    @Override
+    public List<HistorialConsumo> obtenerHistorialConsumo(int numMatricula, Date fechaInicio, Date fechaFin) {
+        return ninoRepositoryPort.obtenerHistorialConsumo(numMatricula, fechaInicio, fechaFin);
+    }
+
+    @Override
+    public List<AlergiaPlato> obtenerAlergiasPlatosPorNino() {
+        return ninoRepositoryPort.findAlergiasPlatosPorNino();
+    }
+
+    @Override
+    public List<AsesorAreaDTO> obtenerAsesoresConAreas() {
+        return ninoRepositoryPort.findAllAsesoresWithAreas();
+    }
+
 }
 

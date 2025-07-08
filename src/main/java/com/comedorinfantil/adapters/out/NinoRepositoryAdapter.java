@@ -292,5 +292,116 @@ public class NinoRepositoryAdapter implements NinoRepositoryPort {
         return lista;
     }
 
+    @Override
+    public List<HistorialConsumo> obtenerHistorialConsumo(int numMatricula, Date fechaInicio, Date fechaFin) {
+        String sql = "SELECT rc.id_registro, rc.num_dias, rc.num_menu, m.nombre_menu, rc.fecha_consumo " +
+                "FROM registro_consumo rc " +
+                "JOIN menu m ON rc.num_menu = m.num_menu " +
+                "WHERE rc.num_matricula = ? " +
+                "AND rc.fecha_consumo BETWEEN ? AND ?";
 
+        List<HistorialConsumo> historial = new ArrayList<>();
+
+        try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setInt(1, numMatricula);
+            stmt.setDate(2, new java.sql.Date(fechaInicio.getTime()));
+            stmt.setDate(3, new java.sql.Date(fechaFin.getTime()));
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                HistorialConsumo dto = new HistorialConsumo();
+                dto.setId_registro(rs.getInt("id_registro"));
+                dto.setNum_dias(rs.getInt("num_dias"));
+                dto.setNum_menu(rs.getInt("num_menu"));
+                dto.setNombre_menu(rs.getString("nombre_menu"));
+                dto.setFecha_consumo(rs.getDate("fecha_consumo"));
+
+                historial.add(dto);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return historial;
+    }
+
+    @Override
+    public List<AlergiaPlato> findAlergiasPlatosPorNino() {
+        String sql = "SELECT " +
+                "n.num_matricula, " +
+                "n.nombre_completo AS nombre_nino, " +
+                "a.id_alergia, " +
+                "a.descripcion AS descripcion_alergia, " +
+                "p.id_plato, " +
+                "p.nombre_plato " +
+                "FROM nino n " +
+                "JOIN nino_alergia na ON n.num_matricula = na.num_matricula " +
+                "JOIN alergia a ON na.id_alergia = a.id_alergia " +
+                "JOIN ingrediente i ON a.id_ingrediente = i.id_ingrediente " +
+                "JOIN plato_ingrediente pi ON i.id_ingrediente = pi.id_ingrediente " +
+                "JOIN plato p ON pi.id_plato = p.id_plato " +
+                "ORDER BY n.num_matricula, a.id_alergia, p.id_plato";
+
+        Statement stmt;
+        ResultSet rs;
+        List<AlergiaPlato> lista = new ArrayList<>();
+
+        try {
+            stmt = conexion.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                AlergiaPlato dto = new AlergiaPlato();
+                dto.setNumMatricula(rs.getInt("num_matricula"));
+                dto.setNombreNino(rs.getString("nombre_nino"));
+                dto.setIdAlergia(rs.getInt("id_alergia"));
+                dto.setDescripcionAlergia(rs.getString("descripcion_alergia"));
+                dto.setIdPlato(rs.getInt("id_plato"));
+                dto.setNombrePlato(rs.getString("nombre_plato"));
+
+                lista.add(dto);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return lista;
+    }
+
+    @Override
+    public List<AsesorAreaDTO> findAllAsesoresWithAreas() {
+        String sql = "SELECT a.id_asesor, a.nombre_completo, a.telefono, a.correo, " +
+                "ae.id_area, ae.nombre_area " +
+                "FROM asesor a " +
+                "JOIN asesor_area aa ON a.id_asesor = aa.id_asesor " +
+                "JOIN area_especializacion ae ON aa.id_area = ae.id_area " +
+                "ORDER BY a.id_asesor, ae.id_area";
+
+        Statement stmt;
+        ResultSet rs;
+        List<AsesorAreaDTO> lista = new ArrayList<>();
+
+        try {
+            stmt = conexion.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                AsesorAreaDTO dto = new AsesorAreaDTO();
+                dto.setIdAsesor(rs.getInt("id_asesor"));
+                dto.setNombreCompleto(rs.getString("nombre_completo"));
+                dto.setTelefono(rs.getString("telefono"));
+                dto.setCorreo(rs.getString("correo"));
+                dto.setIdArea(rs.getInt("id_area"));
+                dto.setNombreArea(rs.getString("nombre_area"));
+
+                lista.add(dto);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return lista;
+    }
 }

@@ -8,6 +8,7 @@ import com.comedorinfantil.dominio.modelo.*;
 import com.comedorinfantil.dominio.ports.in.NinoServicePort;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,6 +34,10 @@ public class Main {
             System.out.println("5. Ver el costo mensual por cada nino");
             System.out.println("6. Ver los menus y sus platos asignados");
             System.out.println("7. Mostrar ninos con alergia y el ingrediente prohibido");
+            System.out.println("8. Obtener un historial de las comidas consumidas por un niño durante un periodo");
+            System.out.println("9. Mostrar alergia y los platos prohibidos por cada nino");
+            System.out.println("10. Ver asesores y sus áreas");
+
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
@@ -141,6 +146,7 @@ public class Main {
 
                 case 7:
                     List<NinoAlergia> alergias = ninoServicePort.obtenerNinosConAlergias();
+
                     System.out.println("----- NIÑOS CON ALERGIAS -----");
                     for (NinoAlergia dto : alergias) {
                         System.out.println("MATRICULA: " + dto.getNum_matricula() +
@@ -148,6 +154,59 @@ public class Main {
                                 " - INGREDIENTE PROHIBIDO: " + dto.getNombre_ingrediente());
                     }
                     System.out.println("--------------------------------");
+                    break;
+
+                case 8:
+                    System.out.print("Ingrese el número de matrícula del niño: ");
+                    int matricula = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.print("Ingrese la fecha de inicio (yyyy-mm-dd): ");
+                    String fechaInicioStr = scanner.nextLine();
+
+                    System.out.print("Ingrese la fecha de fin (yyyy-mm-dd): ");
+                    String fechaFinStr = scanner.nextLine();
+
+                    Date fechaInicio = Date.valueOf(fechaInicioStr);
+                    Date fechaFin = Date.valueOf(fechaFinStr);
+
+                    List<HistorialConsumo> historial = ninoServicePort.obtenerHistorialConsumo(matricula, fechaInicio, fechaFin);
+
+                    System.out.println("------- HISTORIAL DE CONSUMO --------");
+                    for (HistorialConsumo dto : historial) {
+                        System.out.println("ID REGISTRO: " + dto.getId_registro() +
+                                " - DÍAS CONSUMIDOS: " + dto.getNum_dias() +
+                                " - MENÚ: " + dto.getNombre_menu() +
+                                " - FECHA DE CONSUMO: " + dto.getFecha_consumo());
+                    }
+                    System.out.println("--------------------------------------");
+                    break;
+
+                case 9:
+                    List<AlergiaPlato> alergiasPlatos = ninoServicePort.obtenerAlergiasPlatosPorNino();
+
+                    System.out.println("------- MATRICULA DEL NINO CON LA ALERGIA Y SU PLATO PROHIBIDO --------");
+                    for (AlergiaPlato dto : alergiasPlatos) {
+                        System.out.println("NIÑO: " + dto.getNombreNino() +
+                                " (MATRICULA " + dto.getNumMatricula() + ")" +
+                                " - ALERGIA: " + dto.getDescripcionAlergia() +
+                                " - PLATO PROHIBIDO: " + dto.getNombrePlato());
+                    }
+                    System.out.println("-------------------------------------------------------------------------");
+                    break;
+
+                case 10:
+                    List<AsesorAreaDTO> asesores = ninoServicePort.obtenerAsesoresConAreas();
+
+                    System.out.println("------- LISTA DE ASESORES CON AREA --------");
+                    for (AsesorAreaDTO dto : asesores) {
+                        System.out.println("ASESOR: " + dto.getNombreCompleto() +
+                                " (ID: " + dto.getIdAsesor() + ")" +
+                                " - TELEFONO: " + dto.getTelefono() +
+                                " - COREO: " + dto.getCorreo() +
+                                " - AREA: " + dto.getNombreArea());
+                    }
+                    System.out.println("--------------------------------------");
                     break;
 
 

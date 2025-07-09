@@ -6,15 +6,9 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    public static Connection ConectarBD() {
+    public static Connection ConectarBD(String db, String user, String password) {
         Connection conexion;
-
-        // URL de conexión (nombre real de la base de datos)
-        String host = "jdbc:postgresql://localhost:5432/comedor_db";
-
-        // Usuario y contraseña según la imagen que me enviaste
-        String user = "comedor_infantil_examen";
-        String password = "2424";
+        String host = "jdbc:postgresql://localhost:5432/" + db;
 
         System.out.println("Conectando...");
 
@@ -22,7 +16,7 @@ public class Conexion {
             conexion = DriverManager.getConnection(host, user, password);
             System.out.println("Conectado");
         } catch (SQLException e) {
-            System.out.println("Error en la conexión: " + e.getMessage());
+            System.out.println("Error al conectar: " + e.getMessage());
             throw new RuntimeException(e);
         }
 

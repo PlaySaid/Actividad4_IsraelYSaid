@@ -43,7 +43,7 @@ public class Main {
             opcion = scanner.nextInt();
             scanner.nextLine();
 
-            switch (opcion){
+            switch (opcion) {
                 case 1:
                     List<Nino> ninos = ninoServicePort.obtenerTodosLosNinos();
                     System.out.println("-----------------------LISTA DE NINOS-------------------------");
@@ -214,7 +214,8 @@ public class Main {
                     System.out.println("SALIENDO");
                     break;
 
-                default: System.out.println("OPCION INVALIDA");
+                default:
+                    System.out.println("OPCION INVALIDA");
             }
         } while (opcion != 0);
 
